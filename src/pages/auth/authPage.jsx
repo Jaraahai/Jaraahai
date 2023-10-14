@@ -1,6 +1,7 @@
 import { auth, provider } from "../../config/firebaseConfig";
 import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import "./authPage.css";
 
 export const Auth = () => {
   const navigate = useNavigate();
@@ -17,11 +18,24 @@ export const Auth = () => {
     navigate("/profile");
   };
   return (
-    <div className="login-page">
-      <p>Sign In With Google to Continue</p>
-      <button className="login-with-google-btn" onClick={signInWithGoogle}>
-        Sign In With Google
-      </button>
+    <div className="wrapper">
+      <div className="registration-page">
+        <h1>Create Account</h1>
+        <div className="input-box">
+          <label>Email address</label>
+          <input type="text" placeholder="Email address" required />
+        </div>
+        <div className="input-box">
+          <label>Password</label>
+          <input type="password" placeholder="Password" required />
+        </div>
+        <p>Or</p>
+        <div className="google-reg">
+          <button className="login-with-google-btn" onClick={signInWithGoogle}>
+            Continue With Google
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

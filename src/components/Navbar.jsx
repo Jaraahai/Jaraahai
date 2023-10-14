@@ -1,8 +1,13 @@
 import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import "./Navbar.css";
 export const Navbar = () => {
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  if (location.pathname === "/auth") {
+    return null;
+  }
   return (
     <nav>
       <Link to={"/"} className="title">
