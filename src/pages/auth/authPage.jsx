@@ -18,22 +18,37 @@ export const Auth = () => {
     navigate("/profile");
   };
   return (
-    <div className="wrapper">
-      <div className="registration-page">
-        <h1>Create Account</h1>
-        <div className="input-box">
-          <label>Email address</label>
-          <input type="text" placeholder="Email address" required />
-        </div>
-        <div className="input-box">
-          <label>Password</label>
-          <input type="password" placeholder="Password" required />
-        </div>
-        <p>Or</p>
-        <div className="google-reg">
-          <button className="login-with-google-btn" onClick={signInWithGoogle}>
-            Continue With Google
+    <div className="container">
+      <div className="wrapper">
+        <div className="registration-page sign-up">
+          <h1>Create account</h1>
+          <div className="input-box">
+            {/* <label>Email address</label> */}
+            <input type="text" placeholder="Email address" required />
+          </div>
+          <div className="input-box">
+            {/* <label>Password</label> */}
+            <input type="password" placeholder="Password" required />
+          </div>
+          <button type="submit" className="btn">
+            CONTINUE
           </button>
+          <p>OR</p>
+          <div className="google-reg">
+            <button
+              className="login-with-google-btn"
+              onClick={signInWithGoogle}
+            >
+              CONTINUE WITH GOOGLE
+            </button>
+
+            <div className="logreg-link">
+              <p>Already registered?</p>
+              <a href="#" className="register-link">
+                LOG IN
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>

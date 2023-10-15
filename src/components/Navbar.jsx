@@ -11,7 +11,7 @@ export const Navbar = () => {
   return (
     <nav>
       <Link to={"/"} className="title">
-        Jaraahai
+        Logo
       </Link>
       <div
         className="menu"
@@ -26,12 +26,12 @@ export const Navbar = () => {
       <ul className={menuOpen ? "open" : ""}>
         <li>
           <NavLink to={"/auth"} className="create-account">
-            Create Account
+            CREATE ACCOUNT
           </NavLink>
         </li>
         <li>
           <NavLink to={"/auth"} className="login-account">
-            Login
+            LOGIN
           </NavLink>
         </li>
       </ul>

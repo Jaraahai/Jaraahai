@@ -11,7 +11,7 @@ export const MainPage = () => {
           Play with over 22 million gamers in leagues, tournaments and ladders
         </p>
         <Link className="nav-link" to={"/auth"}>
-          Start Now
+          START NOW
         </Link>
       </div>
     </section>
