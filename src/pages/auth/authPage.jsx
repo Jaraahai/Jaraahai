@@ -30,7 +30,7 @@ export const Auth = () => {
             navigate("/profile");
           })
           .catch((error) => {
-            setError("Registration failed. Please check and try again!");
+            setError("You already have an account, Please log in.");
           });
       } else {
         await signInWithEmailAndPassword(auth, email, password)

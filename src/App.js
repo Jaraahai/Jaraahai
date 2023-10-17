@@ -4,6 +4,7 @@ import { Auth } from "./pages/auth/authPage";
 import { ProfilePage } from "./pages/profile/profilePage";
 import { MainPage } from "./pages/main/mainPage";
 import { Navbar } from "./components/Navbar";
+import { ProtectedRoute } from "./pages/auth/protectedRoute";
 
 function App() {
   return (
@@ -16,7 +17,10 @@ function App() {
         <Routes>
           <Route path="/" exact element={<MainPage />} />
           <Route path="/auth" exact element={<Auth />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route
+            path="/profile"
+            element={<ProtectedRoute element={<ProfilePage />} />}
+          />
         </Routes>
       </Router>
     </div>
