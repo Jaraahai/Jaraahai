@@ -16,7 +16,7 @@
 .container .wrapper {
     position: relative;
     width: 560px;
-    height: 550px;
+    height: 590px;
     background: transparent;
     border: 2px solid rgb(48,48,48);
     border-radius: 5px;
@@ -131,4 +131,13 @@ input {
     color:#fff;
     font-weight: 600;
     background-color: rgb(24,119,242);
+}
+
+.error-message {
+    margin: 5px 0 20px 0;
+    color: rgb(255,0,43);
+    letter-spacing: 0.02em;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 20px;
 }

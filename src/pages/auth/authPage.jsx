@@ -13,28 +13,40 @@ export const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isRegistering, setIsRegistering] = useState(true);
+  const [error, setError] = useState("");
+
+  const resetError = () => {
+    setError("");
+  };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
-    if (isRegistering) {
-      await createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          console.log("User registered:", user);
-        })
-        .catch((error) => {
-          console.error("Registration error:", error);
-        });
-    } else {
-      await signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          console.log("User logged in:", user);
-        })
-        .catch((error) => {
-          console.error("Login error:", error);
-        });
+    try {
+      if (isRegistering) {
+        await createUserWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            console.log("User registered:", user);
+            navigate("/profile");
+          })
+          .catch((error) => {
+            setError("Registration failed. Please check and try again!");
+          });
+      } else {
+        await signInWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            console.log("User logged in:", user);
+            navigate("/profile");
+          })
+          .catch((error) => {
+            setError(
+              "Login failed. Invalid Username or Password, Please try again."
+            );
+          });
+      }
+    } catch (error) {
+      setError("Authentication error. Please try again!");
     }
   };
 
@@ -53,6 +65,16 @@ export const Auth = () => {
       console.error("Google Sign-In Error:", error);
     }
   };
+
+  const handleModeChange = () => {
+    resetError();
+    setIsRegistering(!isRegistering);
+    if (!isRegistering) {
+      setEmail("");
+      setPassword("");
+    }
+  };
+
   return (
     <div className="container">
       <div className="wrapper">
@@ -77,6 +99,7 @@ export const Auth = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            {error && <div className="error-message">{error}</div>}
             <button type="submit" className="btn">
               {isRegistering ? "CONTINUE" : "LOGIN"}
             </button>
@@ -96,7 +119,7 @@ export const Auth = () => {
                   ? "Already registered?"
                   : "Don't have an account?"}
               </p>
-              <button onClick={() => setIsRegistering(!isRegistering)}>
+              <button onClick={handleModeChange}>
                 {isRegistering ? "LOG IN" : "REGISTER"}
               </button>
               {/* <a href="#" className="register-link">
