@@ -23,3 +23,5 @@ export const useAuthState = () => {
 
   return { user };
 };
+
+export default useAuthState;

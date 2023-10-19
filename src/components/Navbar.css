@@ -1,5 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 nav {
-    
     justify-content: space-between;
     align-items: center;
     display: flex;
@@ -96,4 +100,4 @@ nav .menu span {
     nav ul li a {
         margin: 0.2rem 0.5rem;
     }
-}
+} 
