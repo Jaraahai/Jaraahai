@@ -27,7 +27,7 @@ export const Auth = () => {
           .then((userCredential) => {
             const user = userCredential.user;
             console.log("User registered:", user);
-            navigate("/profile");
+            navigate("/dashboard");
           })
           .catch((error) => {
             setError("You already have an account, Please log in.");
@@ -37,7 +37,7 @@ export const Auth = () => {
           .then((userCredential) => {
             const user = userCredential.user;
             console.log("User logged in:", user);
-            navigate("/profile");
+            navigate("/dashboard");
           })
           .catch((error) => {
             setError(
@@ -60,7 +60,7 @@ export const Auth = () => {
         isAuth: true,
       };
       localStorage.setItem("auth", JSON.stringify(authInfo));
-      navigate("/profile");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Google Sign-In Error:", error);
     }

@@ -1,21 +1,21 @@
-import { useState } from "react";
-import { useAddProfileData } from "../../hooks/useAddProfile";
+// import { useState } from "react";
+// import { useAddProfileData } from "../../hooks/useAddProfile";
 
 export const ProfilePage = () => {
-  const { profileData } = useAddProfileData();
+  // const { profileData } = useAddProfileData();
 
-  const [name, setName] = useState("");
-  const [age, setAge] = useState(0);
-  const [rank, setRank] = useState("");
+  // const [name, setName] = useState("");
+  // const [age, setAge] = useState(0);
+  // const [rank, setRank] = useState("");
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    profileData({
-      name,
-      age,
-      rank,
-    });
-  };
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   profileData({
+  //     name,
+  //     age,
+  //     rank,
+  //   });
+  // };
 
   return (
     <div className="profilePage">
@@ -27,7 +27,7 @@ export const ProfilePage = () => {
           <h4>Your Rank</h4>
         </div>
       </div>
-      <form className="add-name" onSubmit={onSubmit}>
+      {/* <form className="add-name">
         <input
           type="text"
           placeholder="Name"
@@ -47,7 +47,7 @@ export const ProfilePage = () => {
           onChange={(e) => setRank(e.target.value)}
         />
         <button type="submit">Save</button>
-      </form>
+      </form> */}
     </div>
   );
 };
