@@ -25,6 +25,7 @@ export const Auth = () => {
       if (isRegistering) {
         await createUserWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
+            // TODO: Save user to firebase realtime database
             const user = userCredential.user;
             console.log("User registered:", user);
             navigate("/dashboard");
@@ -35,6 +36,7 @@ export const Auth = () => {
       } else {
         await signInWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {
+            // TODO: Save user to firebase realtime database
             const user = userCredential.user;
             console.log("User logged in:", user);
             navigate("/dashboard");
