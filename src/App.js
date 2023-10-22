@@ -14,14 +14,19 @@ import useAuthState from "./hooks/useAuthState";
 import Dashboard from "./pages/dashboard/dashboardPage";
 
 function App() {
-  const { user } = useAuthState();
+  const { user, loading } = useAuthState();
+  console.log('user: ', user);
+  if (loading === true) {
+    return <div className="container">
 
+    </div>;
+  }
   return (
     <div className="App">
       <Router>
-        <div>
+        {/* <div>
           <Navbar />
-        </div>
+        </div> */}
 
         <Routes>
           <Route path="/" element={<MainPage />} />
@@ -30,7 +35,7 @@ function App() {
             <>
               <Route
                 path="/auth"
-                element={<Navigate to="/dashboard" replace />}
+                element={<Navigate to="/dashboard" replace ex />}
               />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route
