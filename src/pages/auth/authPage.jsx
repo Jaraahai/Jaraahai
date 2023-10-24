@@ -7,6 +7,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import "./authPage.css";
 import { useState } from "react";
+import profilePic from "../../img/profile.png";
 
 export const Auth = () => {
   const navigate = useNavigate();
@@ -23,7 +24,19 @@ export const Auth = () => {
     e.preventDefault();
     try {
       if (isRegistering) {
-        await createUserWithEmailAndPassword(auth, email, password)
+        const results = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        const authInfo = {
+          userID: results.user.uid,
+          name: results.user.displayName || "",
+          profilePhoto: results.user.photoURL || profilePic,
+          isAuth: true,
+        };
+        localStorage.setItem("auth", JSON.stringify(authInfo));
+        navigate("/dashboard")
           .then((userCredential) => {
             // TODO: Save user to firebase realtime database
             const user = userCredential.user;
@@ -34,7 +47,15 @@ export const Auth = () => {
             setError("You already have an account, Please log in.");
           });
       } else {
-        await signInWithEmailAndPassword(auth, email, password)
+        const results = await signInWithEmailAndPassword(auth, email, password);
+        const authInfo = {
+          userID: results.user.uid,
+          name: results.user.displayName || "",
+          profilePhoto: results.user.photoURL || profilePic,
+          isAuth: true,
+        };
+        localStorage.setItem("auth", JSON.stringify(authInfo));
+        navigate("/dashboard")
           .then((userCredential) => {
             // TODO: Save user to firebase realtime database
             const user = userCredential.user;

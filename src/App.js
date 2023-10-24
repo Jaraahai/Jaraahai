@@ -8,18 +8,16 @@ import {
 import { Auth } from "./pages/auth/authPage";
 import { ProfilePage } from "./pages/profile/profilePage";
 import { MainPage } from "./pages/main/mainPage";
-import { Navbar } from "./components/Navbar";
+// import { Navbar } from "./components/Navbar";
 import { ProtectedRoute } from "./pages/auth/protectedRoute";
 import useAuthState from "./hooks/useAuthState";
 import Dashboard from "./pages/dashboard/dashboardPage";
 
 function App() {
   const { user, loading } = useAuthState();
-  console.log('user: ', user);
+  console.log("user: ", user);
   if (loading === true) {
-    return <div className="container">
-
-    </div>;
+    return <div className="container"></div>;
   }
   return (
     <div className="App">
