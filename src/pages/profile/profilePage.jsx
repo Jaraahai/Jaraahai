@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { useAddProfileData } from "../../hooks/useAddProfile";
 
 export const ProfilePage = () => {
-  const { saveProfileData, userInfo, docRef, db } = useAddProfileData();
+  const { saveProfileData, userInfo, db } = useAddProfileData();
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -14,14 +14,15 @@ export const ProfilePage = () => {
 
   async function fetchData() {
     // try {
-    const res = await getDoc(doc(db, "profile", docRef));
+    const res = await getDoc(doc(db, "profile", userInfo.userID));
     if (res.exists()) {
       console.log("getdoc: ", res.data(doc));
-      // const userData = res.data();
-      // setName(userData.name);
-      // setAge(userData.age);
-      // setRank(userData.rank);
-      // setPhoneNumber(userData.phoneNumber);
+      const userData = res.data(doc);
+      console.log('userData: ', userData);
+      setName(userData.name);
+      setAge(userData.age);
+      setRank(userData.rank);
+      setPhoneNumber(userData.phoneNumber);
     } else {
       console.log("Document does not exist.");
     }
@@ -30,22 +31,9 @@ export const ProfilePage = () => {
     // }
   }
 
-  // useEffect(() => {
-  //   const setProfileList = async () => {
-  //     try {
-  //       const data = await getDocs(profileCollectionRef);
-  //       const filteredData = data.docs.map((doc) => ({
-  //         ...doc.data(),
-  //         id: doc.id,
-  //       }));
-  //       console.log(filteredData);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   setProfileList();
-  // });
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -56,7 +44,7 @@ export const ProfilePage = () => {
       rank,
       phoneNumber,
     });
-    await fetchData();
+    // await fetchData();
     setIsEditing(false);
   };
 
@@ -92,7 +80,7 @@ export const ProfilePage = () => {
                   Phone number
                 </h2>
                 <p className="tw-pt-2 tw-text-sm tw-font-normal tw-leading-5">
-                  {userInfo.phoneNumber}
+                  {phoneNumber}
                 </p>
               </div>
             </div>
@@ -106,7 +94,7 @@ export const ProfilePage = () => {
                   Name
                 </h2>
                 <p className="tw-pt-2 tw-text-sm tw-font-normal tw-leading-5">
-                  {userInfo.name}
+                  {name}
                 </p>
               </div>
               <div className="tw-bg-[#303030] tw-h-px tw-min-h-px"></div>
@@ -115,7 +103,7 @@ export const ProfilePage = () => {
                   Age
                 </h2>
                 <p className="tw-pt-2 tw-text-sm tw-font-normal tw-leading-5">
-                  {userInfo.age}
+                  {age}
                 </p>
               </div>
               <div className="tw-bg-[#303030] tw-h-px tw-min-h-px"></div>
@@ -124,7 +112,7 @@ export const ProfilePage = () => {
                   Rank
                 </h2>
                 <p className="tw-pt-2 tw-text-sm tw-font-normal tw-leading-5">
-                  {userInfo.rank}
+                  {rank}
                 </p>
               </div>
               <div className="tw-bg-[#303030] tw-h-px tw-min-h-px"></div>
