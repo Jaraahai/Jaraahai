@@ -1,4 +1,4 @@
-import { addDoc, collection, serverTimestamp, setDoc, doc } from "firebase/firestore";
+import { collection, serverTimestamp, setDoc, doc } from "firebase/firestore";
 import { db } from "../config/firebaseConfig";
 import { useGetUserInfo } from "./useGetUserInfo";
 
@@ -11,7 +11,7 @@ export const useAddProfileData = () => {
 
   const saveProfileData = async ({ name, age, rank, phoneNumber }) => {
     try {
-      const res = await setDoc(doc(db, 'profile', userID), {
+      const res = await setDoc(doc(db, "profile", userID), {
         userID,
         name,
         age,
@@ -26,5 +26,5 @@ export const useAddProfileData = () => {
     }
   };
 
-  return { saveProfileData, userInfo, profileCollectionRef,  db };
+  return { saveProfileData, userInfo, profileCollectionRef, db };
 };

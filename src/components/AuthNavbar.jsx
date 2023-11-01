@@ -1,12 +1,13 @@
-import React from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import "../App.css";
-import { Fragment } from "react";
 import { signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 import { auth } from "../config/firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import { useAddProfileData } from "../hooks/useAddProfile";
 // import useAuthState from "../hooks/useAuthState";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
 // import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
 import profilePic from "../img/profile.png";
 import logoPic from "../img/hexa.png";
 
@@ -23,7 +24,18 @@ function AuthNavbar() {
   // if (location.pathname === "/auth" || user) {
   //   return null;
   // }
+  const { userInfo, db } = useAddProfileData();
+  const [name, setName] = useState(userInfo.name || "");
 
+  async function fetchData() {
+    const res = await getDoc(doc(db, "profile", userInfo.userID));
+    if (res.exists()) {
+      const userData = res.data(doc);
+      setName(userData.name);
+    } else {
+      console.log("Document does not exist.");
+    }
+  }
   const signUserOut = async () => {
     try {
       await signOut(auth);
@@ -33,6 +45,10 @@ function AuthNavbar() {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <Disclosure as="nav" className="tw-bg-[#1f1f1f]">
@@ -86,6 +102,7 @@ function AuthNavbar() {
                   </div>
                 </div> */}
               </div>
+
               <div className="tw-space-x-2 tw-inset-y-0 tw-right-0 tw-flex tw-items-center tw-pr-2 sm:tw-static sm:tw-inset-auto sm:tw-ml-6 sm:tw-pr-0">
                 {/* <button
                   type="button"
@@ -97,6 +114,9 @@ function AuthNavbar() {
                 </button> */}
 
                 {/* Profile dropdown */}
+                <div className="tw-text-white tw-tracking-[0.02em] tw-text-sm tw-font-normal tw-leading-5">
+                  <p>{name}</p>
+                </div>
                 <Menu as="div" className="tw-relative tw-ml-3">
                   <div>
                     <Menu.Button className="tw-relative tw-flex tw-rounded-full tw-bg-gray-800 tw-text-sm focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-white focus:tw-ring-offset-2 focus:tw-ring-offset-gray-800">

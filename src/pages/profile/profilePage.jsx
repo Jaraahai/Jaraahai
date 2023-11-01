@@ -4,7 +4,6 @@ import { useAddProfileData } from "../../hooks/useAddProfile";
 
 export const ProfilePage = () => {
   const { saveProfileData, userInfo, db } = useAddProfileData();
-
   const [isEditing, setIsEditing] = useState(false);
 
   const [name, setName] = useState(userInfo.name || "");
@@ -18,7 +17,7 @@ export const ProfilePage = () => {
     if (res.exists()) {
       console.log("getdoc: ", res.data(doc));
       const userData = res.data(doc);
-      console.log('userData: ', userData);
+      console.log("userData: ", userData);
       setName(userData.name);
       setAge(userData.age);
       setRank(userData.rank);
@@ -55,6 +54,9 @@ export const ProfilePage = () => {
   return (
     <div className="tw-flex tw-justify-center tw-items-center tw-min-h-screen tw-bg-[#161616] tw-text-white">
       <div className="">
+        <div className=" tw-text-white tw-font-bold tw-py-2 tw-rounded focus:tw-outline-none focus:tw-shadow-outline">
+          <a href="/dashboard">Back</a>
+        </div>
         <h1 className="tw-mb-6 tw-text-3xl tw-font-bold tw-tracking-[0.0025em] tw-leading-8">
           Account Information
         </h1>
