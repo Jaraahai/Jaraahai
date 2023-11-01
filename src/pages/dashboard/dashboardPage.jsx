@@ -3,10 +3,12 @@ import AuthNavbar from "../../components/AuthNavbar";
 import { useAuthState } from "../../hooks/useAuthState";
 import { doc, getDoc } from "firebase/firestore";
 import { useAddProfileData } from "../../hooks/useAddProfile";
+import { useCreateLobby } from "../../hooks/useCreateLobby";
 
 const Dashboard = () => {
   const { user } = useAuthState();
   const { userInfo, db } = useAddProfileData();
+  const { createNewLobby } = useCreateLobby();
 
   const [name, setName] = useState(userInfo.name || "");
   // const [lobbies, setLobbies] = useState([]);
@@ -16,24 +18,33 @@ const Dashboard = () => {
   // });
 
   async function fetchData() {
-    const res = await getDoc(doc(db, "profile", userInfo.userID));
-    if (res.exists()) {
-      const userData = res.data(doc);
-      setName(userData.name);
-    } else {
-      console.log("Document does not exist.");
+    try {
+      const res = await getDoc(doc(db, "profile", userInfo.userID));
+      if (res.exists()) {
+        const userData = res.data(doc);
+        setName(userData.name);
+      } else {
+        console.log("Document does not exist.");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
     }
   }
 
   // Load existing lobbies from Firebase
   useEffect(() => {
     fetchData();
+
     // Fetch lobbies from Firebase and update 'lobbies' state
   }, []);
 
-  // Create a new lobby
-  const createLobby = () => {
-    // Push new lobby data to Firebase
+  const handleCreateLobby = async () => {
+    createNewLobby({
+      activePlayers: [], // You can pass any relevant data here
+      creator: userInfo.name, // Assuming user has a display name
+      lobbyName: "Your Lobby Name",
+      maxPlayers: 4, // Set the maximum number of players
+    });
   };
 
   // Join a lobby
@@ -51,7 +62,7 @@ const Dashboard = () => {
                 <p>Welcome Back, {name}!</p>
                 <button
                   className=" tw-px-4 tw-py-2 tw-rounded tw-cursor-pointer tw-text-sm tw-text-white tw-font-semibold tw-bg-[#ff5500]"
-                  onClick={createLobby}
+                  onClick={handleCreateLobby()}
                 >
                   Create Lobby
                 </button>

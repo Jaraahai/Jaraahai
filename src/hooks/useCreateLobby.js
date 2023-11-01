@@ -1,29 +1,29 @@
-import { useState } from "react";
-import { setDoc, collection, serverTimestamp } from "firebase/firestore";
+import { setDoc, collection, serverTimestamp, doc } from "firebase/firestore";
 import { useAddProfileData } from "./useAddProfile";
+import { db } from "../config/firebaseConfig";
 
 export const useCreateLobby = () => {
   const lobbyRef = collection(db, "lobbies");
-  const { userInfo, db } = useAddProfileData();
-  //   const [lobbyData, setLobbyData] = useState({
-  //     creator: "",
-  //     maxPlayers: 10,
-  //   });
+  const { userInfo } = useAddProfileData();
 
-  const createNewLobby = async () => {
+  const createNewLobby = async (newLobbyData) => {
     try {
       const newLobby = {
-        ...lobbyData,
-        creator: user.uid,
+        ...newLobbyData,
+        creator: userInfo.name,
         createdAt: serverTimestamp(),
+        lobbyName: "",
+        maxPlayers: 10,
       };
 
-      await setDoc(lobbyRef, newLobby);
+      await setDoc(doc(lobbyRef), newLobby);
 
-      setLobbyData({
-        creator: "",
-        maxPlayers: 10,
-      });
+      // setLobbyData({
+      //   activePlayers: [],
+      //   creator: "",
+      //   lobbyName: "",
+      //   maxPlayers: 10,
+      // });
 
       alert("Lobby created successfully!");
     } catch (error) {
@@ -32,5 +32,5 @@ export const useCreateLobby = () => {
     }
   };
 
-  return { createNewLobby };
+  return { createNewLobby, lobbyRef };
 };
