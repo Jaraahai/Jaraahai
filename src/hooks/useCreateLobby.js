@@ -1,36 +1,45 @@
-import { setDoc, collection, serverTimestamp, doc } from "firebase/firestore";
-import { useAddProfileData } from "./useAddProfile";
+import {
+  setDoc,
+  collection,
+  serverTimestamp,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { db } from "../config/firebaseConfig";
+import { useAddProfileData } from "./useAddProfile";
 
 export const useCreateLobby = () => {
   const lobbyRef = collection(db, "lobbies");
   const { userInfo } = useAddProfileData();
+  const { userID } = userInfo;
 
-  const createNewLobby = async (newLobbyData) => {
+  const createNewLobby = async ({ lobbyName, maxPlayers }) => {
     try {
-      const newLobby = {
-        ...newLobbyData,
-        creator: userInfo.name,
-        createdAt: serverTimestamp(),
-        lobbyName: "",
-        maxPlayers: 10,
-      };
+      const profileDoc = await getDoc(doc(db, "profile", userID));
+      if (profileDoc.exists()) {
+        const creatorName = profileDoc.data().name;
 
-      await setDoc(doc(lobbyRef), newLobby);
+        const newLobby = await setDoc(doc(db, "lobbies", userID), {
+          userID,
+          creator: creatorName,
+          lobbyName,
+          maxPlayers,
+          createdAt: serverTimestamp(),
+        });
 
-      // setLobbyData({
-      //   activePlayers: [],
-      //   creator: "",
-      //   lobbyName: "",
-      //   maxPlayers: 10,
-      // });
-
-      alert("Lobby created successfully!");
+        // setLobbyData({
+        //   activePlayers: [],
+        //   creator: "",
+        //   lobbyName: "",
+        //   maxPlayers: 10,
+        // });
+        console.log("newLobby: ", newLobby);
+        alert("Lobby created successfully!");
+      }
     } catch (error) {
       console.error("Error creating lobby:", error);
-      alert("An error occurred while creating the lobby.");
     }
   };
 
-  return { createNewLobby, lobbyRef };
+  return { createNewLobby, lobbyRef, db };
 };
