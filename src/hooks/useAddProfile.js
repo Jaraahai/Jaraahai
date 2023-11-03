@@ -7,7 +7,7 @@ export const useAddProfileData = () => {
   const userInfo = useGetUserInfo();
   const { userID } = userInfo;
 
-  console.log("userInfo: ", userInfo);
+  // console.log("userInfo: ", userInfo);
 
   const saveProfileData = async ({ name, age, rank, phoneNumber }) => {
     try {

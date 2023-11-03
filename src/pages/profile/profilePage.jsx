@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { useAddProfileData } from "../../hooks/useAddProfile";
 
@@ -11,28 +11,28 @@ export const ProfilePage = () => {
   const [rank, setRank] = useState(userInfo.rank || "");
   const [phoneNumber, setPhoneNumber] = useState(userInfo.phoneNumber || "");
 
-  async function fetchData() {
-    // try {
-    const res = await getDoc(doc(db, "profile", userInfo.userID));
-    if (res.exists()) {
-      console.log("getdoc: ", res.data(doc));
-      const userData = res.data(doc);
-      console.log("userData: ", userData);
-      setName(userData.name);
-      setAge(userData.age);
-      setRank(userData.rank);
-      setPhoneNumber(userData.phoneNumber);
-    } else {
-      console.log("Document does not exist.");
-    }
-    // } catch (error) {
-    //   console.error("Error fetching data:", error);
-    // }
-  }
-
   useEffect(() => {
+    async function fetchData() {
+      // try {
+      const res = await getDoc(doc(db, "profile", userInfo.userID));
+      if (res.exists()) {
+        console.log("getdoc: ", res.data(doc));
+        const userData = res.data(doc);
+        console.log("userData: ", userData);
+        setName(userData.name);
+        setAge(userData.age);
+        setRank(userData.rank);
+        setPhoneNumber(userData.phoneNumber);
+      } else {
+        console.log("Document does not exist.");
+      }
+      // } catch (error) {
+      //   console.error("Error fetching data:", error);
+      // }
+    }
+
     fetchData();
-  }, []);
+  }, [db, userInfo.userID]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -194,7 +194,7 @@ export const ProfilePage = () => {
                     className="tw-block tw-text-gray-700 tw-text-sm tw-font-bold tw-mb-2"
                     htmlFor="username"
                   >
-                    Your rank
+                    Your phone number
                   </label>
                   <input
                     className="tw-shadow  tw-border tw-rounded tw-w-full tw-py-2 tw-px-3 tw-text-white tw-leading-tight focus:tw-outline-none focus:tw-shadow-outline"

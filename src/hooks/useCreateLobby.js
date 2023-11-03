@@ -18,22 +18,19 @@ export const useCreateLobby = () => {
       const profileDoc = await getDoc(doc(db, "profile", userID));
       if (profileDoc.exists()) {
         const creatorName = profileDoc.data().name;
+        const creatorRank = profileDoc.data().rank;
 
-        const newLobby = await setDoc(doc(db, "lobbies", userID), {
+        const newLobbyData = await setDoc(doc(db, "lobbies", userID), {
           userID,
           creator: creatorName,
+          rank: creatorRank,
           lobbyName,
           maxPlayers,
+          activePlayers: [],
           createdAt: serverTimestamp(),
         });
 
-        // setLobbyData({
-        //   activePlayers: [],
-        //   creator: "",
-        //   lobbyName: "",
-        //   maxPlayers: 10,
-        // });
-        console.log("newLobby: ", newLobby);
+        console.log("newLobby: ", newLobbyData);
         alert("Lobby created successfully!");
       }
     } catch (error) {

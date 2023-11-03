@@ -12,6 +12,7 @@ import { MainPage } from "./pages/main/mainPage";
 import { ProtectedRoute } from "./pages/auth/protectedRoute";
 import useAuthState from "./hooks/useAuthState";
 import Dashboard from "./pages/dashboard/dashboardPage";
+import LobbyPage from "./pages/lobby/lobbyPage";
 
 function App() {
   const { user, loading } = useAuthState();
@@ -40,6 +41,7 @@ function App() {
                 path="/profile"
                 element={<ProtectedRoute element={<ProfilePage />} />}
               />
+              <Route path="/lobby/:lobbyId" element={<LobbyPage />} />
             </>
           ) : (
             <>

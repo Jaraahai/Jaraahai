@@ -1,50 +1,88 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthNavbar from "../../components/AuthNavbar";
 import { useAuthState } from "../../hooks/useAuthState";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, query, onSnapshot } from "firebase/firestore";
 import { useAddProfileData } from "../../hooks/useAddProfile";
 import { useCreateLobby } from "../../hooks/useCreateLobby";
 
 const Dashboard = () => {
   const { user } = useAuthState();
   const { userInfo, db } = useAddProfileData();
-  const { createNewLobby } = useCreateLobby();
+  const { createNewLobby, lobbyRef } = useCreateLobby();
+  const navigate = useNavigate();
 
   const [name, setName] = useState(userInfo.name || "");
-  // const [lobbies, setLobbies] = useState([]);
-  // const [newLobbies, setNewLobbies] = useState({
-  //   name: "",
-  //   maxPlayers: 4,
-  // });
+  const [lobbies, setLobbies] = useState([]);
+  const [hasCreatedLobby, setHasCreatedLobby] = useState(false);
 
-  async function fetchData() {
-    try {
-      const res = await getDoc(doc(db, "profile", userInfo.userID));
-      if (res.exists()) {
-        const userData = res.data(doc);
-        setName(userData.name);
-      } else {
-        console.log("Document does not exist.");
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  }
+  // const isProfileComplete = (userInfo) => {
+  //   return userInfo.name && userInfo.age > 0 && userInfo.rank;
+  // };
 
-  // Load existing lobbies from Firebase
   useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await getDoc(doc(db, "profile", userInfo.userID));
+        if (res.exists()) {
+          const userData = res.data();
+          setName(userData.name);
+        } else {
+          console.log("Document does not exist.");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    }
+
+    // Load existing lobbies from Firebase
     fetchData();
 
     // Fetch lobbies from Firebase and update 'lobbies' state
-  }, []);
+    const q = query(lobbyRef);
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const lobbyList = [];
+      let userHasLobby = false;
+      snapshot.forEach((doc) => {
+        const lobbyData = doc.data();
+        lobbyList.push(lobbyData);
+
+        if (lobbyData.userID === userInfo.userID) {
+          userHasLobby = true;
+        }
+      });
+      setLobbies(lobbyList);
+
+      setHasCreatedLobby(userHasLobby);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, [lobbyRef, userInfo.userID, db]);
 
   const handleCreateLobby = async () => {
-    createNewLobby({
-      activePlayers: [],
-      creator: userInfo.name,
-      lobbyName: "Your Lobby Name",
-      maxPlayers: 10,
-    });
+    if (hasCreatedLobby) {
+      alert("You already created a lobby.");
+      // } else if (!isProfileComplete(userInfo)) {
+      //   alert("Please update your profile before creating a lobby.");
+    } else {
+      const newLobbyData = {
+        userID: userInfo.userID,
+        creator: userInfo.name,
+        rank: userInfo.rank,
+        lobbyName: "New Lobby1",
+        maxPlayers: 10,
+        activePlayers: [],
+      };
+
+      try {
+        await createNewLobby(newLobbyData);
+
+        navigate(`/lobby/${newLobbyData.userID}`);
+      } catch (error) {
+        console.error("Error creating lobby: ", error);
+      }
+    }
   };
 
   // Join a lobby
@@ -103,36 +141,22 @@ const Dashboard = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td className="tw-pl-0 tw-font-medium tw-text-sm tw-pr-3 tw-py-4 tw-whitespace-nowrap">
-                            Lobby1
-                          </td>
-                          <td className="tw-font-medium tw-text-sm tw-px-3 tw-py-4 tw-whitespace-nowrap">
-                            Global Elite
-                          </td>
-                          {/* <td>Jaraahai</td> */}
-                          <td className="tw-font-medium tw-text-sm tw-px-3 tw-py-4 tw-whitespace-nowrap">
-                            7/10
-                          </td>
-                          <td className="tw-pr-0 tw-text-left tw-relative tw-font-medium tw-text-sm tw-pl-3 tw-py-4 tw-whitespace-nowrap">
-                            <a href="#">Join</a>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="tw-pl-0 tw-font-medium tw-text-sm tw-pr-3 tw-py-4 tw-whitespace-nowrap">
-                            Lobby2
-                          </td>
-                          <td className="tw-font-medium tw-text-sm tw-px-3 tw-py-4 tw-whitespace-nowrap">
-                            Silver
-                          </td>
-                          {/* <td>Eegii</td> */}
-                          <td className="tw-font-medium tw-text-sm tw-px-3 tw-py-4 tw-whitespace-nowrap">
-                            3/10
-                          </td>
-                          <td className="tw-pr-0 tw-text-left tw-relative tw-font-medium tw-text-sm tw-pl-3 tw-py-4 tw-whitespace-nowrap">
-                            <a href="#">Join</a>
-                          </td>
-                        </tr>
+                        {lobbies.map((lobby) => (
+                          <tr key={lobby.userID}>
+                            <td className="tw-font-medium tw-text-sm tw-px-3 tw-py-4 tw-whitespace-nowrap">
+                              {lobby.lobbyName}
+                            </td>
+                            <td className="tw-font-medium tw-text-sm tw-px-3 tw-py-4 tw-whitespace-nowrap">
+                              {lobby.rank}
+                            </td>
+                            <td className="tw-font-medium tw-text-sm tw-px-3 tw-py-4 tw-whitespace-nowrap">
+                              {`${lobby.maxPlayers}/${lobby.maxPlayers}`}
+                            </td>
+                            <td className="tw-pr-0 tw-text-left tw-relative tw-font-medium tw-text-sm tw-pl-3 tw-py-4 tw-whitespace-nowrap">
+                              <a href={`/lobby/${lobby.userID}`}>Join</a>
+                            </td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
                   </div>
