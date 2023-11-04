@@ -9,7 +9,7 @@ import { useCreateLobby } from "../../hooks/useCreateLobby";
 const Dashboard = () => {
   const { user } = useAuthState();
   const { userInfo, db } = useAddProfileData();
-  const { createNewLobby, lobbyRef } = useCreateLobby();
+  const { createNewLobby, lobbyRef, joinNewLobby } = useCreateLobby();
   const navigate = useNavigate();
 
   const [name, setName] = useState(userInfo.name || "");
@@ -86,9 +86,13 @@ const Dashboard = () => {
   };
 
   // Join a lobby
-  // const joinLobby = (lobbyId, username) => {
-  // Update Firebase data to reflect the user's participation in the lobby
-  // };
+  const joinLobby = async (lobby) => {
+    console.log('lobby: ', lobby);
+   // Update Firebase data to reflect the user's participation in the lobby
+    await joinNewLobby({lobby, userInfo});
+    navigate(`/lobby/${lobby.userID}`);
+  };
+
   return (
     <div className="tw-bg-[#161616] tw-min-h-screen tw-text-white">
       <AuthNavbar />
@@ -153,7 +157,7 @@ const Dashboard = () => {
                               {`${lobby.maxPlayers}/${lobby.maxPlayers}`}
                             </td>
                             <td className="tw-pr-0 tw-text-left tw-relative tw-font-medium tw-text-sm tw-pl-3 tw-py-4 tw-whitespace-nowrap">
-                              <a href={`/lobby/${lobby.userID}`}>Join</a>
+                              <button onClick={() => joinLobby(lobby)}>Join</button>
                             </td>
                           </tr>
                         ))}

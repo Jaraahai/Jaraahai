@@ -38,5 +38,17 @@ export const useCreateLobby = () => {
     }
   };
 
-  return { createNewLobby, lobbyRef, db };
+  const joinNewLobby = async ({ lobby, userInfo }) => {
+    try {
+        lobby.activePlayers.push(userInfo.userID);
+        const newLobbyData = await setDoc(doc(db, "lobbies", lobby.userID), lobby);
+        console.log("newLobby: ", newLobbyData);
+        alert("Lobby joined successfully!");
+    } catch (error) {
+      console.error("Error creating lobby:", error);
+    }
+  };
+  
+
+  return { createNewLobby, lobbyRef, db, joinNewLobby };
 };
