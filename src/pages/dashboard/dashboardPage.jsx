@@ -58,7 +58,7 @@ const Dashboard = () => {
     return () => {
       unsubscribe();
     };
-  }, [lobbyRef, userInfo.userID, db]);
+  }, []);
 
   const handleCreateLobby = async () => {
     if (hasCreatedLobby) {
@@ -87,9 +87,9 @@ const Dashboard = () => {
 
   // Join a lobby
   const joinLobby = async (lobby) => {
-    console.log('lobby: ', lobby);
-   // Update Firebase data to reflect the user's participation in the lobby
-    await joinNewLobby({lobby, userInfo});
+    console.log("lobby: ", lobby);
+    // Update Firebase data to reflect the user's participation in the lobby
+    await joinNewLobby({ lobby, userInfo });
     navigate(`/lobby/${lobby.userID}`);
   };
 
@@ -157,7 +157,9 @@ const Dashboard = () => {
                               {`${lobby.maxPlayers}/${lobby.maxPlayers}`}
                             </td>
                             <td className="tw-pr-0 tw-text-left tw-relative tw-font-medium tw-text-sm tw-pl-3 tw-py-4 tw-whitespace-nowrap">
-                              <button onClick={() => joinLobby(lobby)}>Join</button>
+                              <button onClick={() => joinLobby(lobby)}>
+                                Join
+                              </button>
                             </td>
                           </tr>
                         ))}

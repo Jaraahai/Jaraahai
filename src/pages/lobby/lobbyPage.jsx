@@ -35,7 +35,7 @@ const LobbyPage = () => {
     };
 
     fetchLobbyData();
-  }, [lobbyId]);
+  }, []);
 
   if (!lobbyData) {
     return <div>Loading...</div>;
