@@ -26,10 +26,13 @@ export const useCreateLobby = () => {
           rank: creatorRank,
           lobbyName,
           maxPlayers,
-          activePlayers: [],
+          activePlayers: [userID],
           createdAt: serverTimestamp(),
         });
 
+        const lobbyDocRef = doc(db, "lobbies", userID);
+
+        await setDoc(lobbyDocRef, newLobbyData, { merge: true });
         console.log("newLobby: ", newLobbyData);
         alert("Lobby created successfully!");
       }
@@ -40,15 +43,21 @@ export const useCreateLobby = () => {
 
   const joinNewLobby = async ({ lobby, userInfo }) => {
     try {
+      if (!lobby.activePlayers.includes(userInfo.userID)) {
         lobby.activePlayers.push(userInfo.userID);
-        const newLobbyData = await setDoc(doc(db, "lobbies", lobby.userID), lobby);
+        const newLobbyData = await setDoc(
+          doc(db, "lobbies", lobby.userID),
+          lobby
+        );
         console.log("newLobby: ", newLobbyData);
         alert("Lobby joined successfully!");
+      } else {
+        alert("You're already in this lobby!");
+      }
     } catch (error) {
       console.error("Error creating lobby:", error);
     }
   };
-  
 
   return { createNewLobby, lobbyRef, db, joinNewLobby };
 };

@@ -72,7 +72,7 @@ const Dashboard = () => {
         rank: userInfo.rank,
         lobbyName: "New Lobby1",
         maxPlayers: 10,
-        activePlayers: [],
+        activePlayers: [userInfo.userID],
       };
 
       try {
@@ -88,8 +88,10 @@ const Dashboard = () => {
   // Join a lobby
   const joinLobby = async (lobby) => {
     console.log("lobby: ", lobby);
-    // Update Firebase data to reflect the user's participation in the lobby
-    await joinNewLobby({ lobby, userInfo });
+
+    if (!lobby.activePlayers.includes(userInfo.userID)) {
+      await joinNewLobby({ lobby, userInfo });
+    }
     navigate(`/lobby/${lobby.userID}`);
   };
 
@@ -134,7 +136,7 @@ const Dashboard = () => {
                             Rank
                           </th>
                           <th className="tw-pl-0 tw-tracking-wide tw-uppercase tw-font-medium tw-text-xs tw-text-left tw-px-3 tw-py-3">
-                            Max Players
+                            Players
                           </th>
                           {/* <th className="tw-pl-0 tw-tracking-wide tw-uppercase tw-font-medium tw-text-xs tw-text-left tw-px-3 tw-py-3">
                             Lobby Creator
