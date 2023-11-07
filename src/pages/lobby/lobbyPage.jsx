@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { doc, getDoc, deleteDoc, setDoc } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
 import { useAddProfileData } from "../../hooks/useAddProfile";
+import AuthNavbar from "../../components/AuthNavbar";
 
 const LobbyPage = () => {
   const { lobbyId } = useParams();
@@ -67,28 +68,49 @@ const LobbyPage = () => {
   }
 
   return (
-    <div>
-      <h1>Lobby Name: {lobbyData.lobbyName}</h1>
-      <p>Creator: {lobbyData.creator}</p>
-
-      {userInfo.userID === lobbyData.userID && (
-        <button className="tw-bg-[#ff0000]" onClick={handleDeleteLobby}>
-          Delete Lobby
-        </button>
-      )}
-      {lobbyData.activePlayers.includes(userInfo.userID) && (
-        <button className="tw-bg-[#484848]" onClick={handleLeaveLobby}>
-          Leave Lobby
-        </button>
-      )}
-
-      <h1>Active users:</h1>
-      <ul>
-        {activeUsers.map((userId, index) => (
-          <li key={index}>{userId}</li>
-        ))}
-      </ul>
-      {/* Other lobby details to display */}
+    <div className="tw-bg-[#161616] tw-min-h-screen tw-text-white">
+      <AuthNavbar />
+      <div className="tw-contents">
+        <div className="tw-py-10">
+          <div className="tw-max-w-7xl tw-mx-auto">
+            <div className="tw-px-4">
+              <div className="tw-flex tw-items-center">
+                <div className="tw-flex-auto">
+                  <h1 className="tw-text-2xl tw-font-semibold">
+                    {lobbyData.creator}'s Lobby
+                  </h1>
+                </div>
+                {userInfo.userID === lobbyData.userID && (
+                  <button
+                    className="tw-bg-[#ff0000] tw-text-white tw-font-medium tw-py-2 tw-px-4 tw-rounded-md"
+                    onClick={handleDeleteLobby}
+                  >
+                    Delete Lobby
+                  </button>
+                )}
+                {lobbyData.activePlayers.includes(userInfo.userID) && (
+                  <button
+                    className="tw-bg-[#484848] tw-text-white tw-font-medium tw-py-2 tw-px-4 tw-rounded-md"
+                    onClick={handleLeaveLobby}
+                  >
+                    Leave Lobby
+                  </button>
+                )}
+              </div>
+              <h1 className="tw-mt-8 tw-text-xl tw-font-semibold">
+                Active Users:
+              </h1>
+              <ul className="tw-mt-2">
+                {activeUsers.map((userId, index) => (
+                  <li key={index} className="tw-text-sm">
+                    {userId}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

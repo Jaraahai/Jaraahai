@@ -156,7 +156,7 @@ const Dashboard = () => {
                               {lobby.rank}
                             </td>
                             <td className="tw-font-medium tw-text-sm tw-px-3 tw-py-4 tw-whitespace-nowrap">
-                              {`${lobby.maxPlayers}/${lobby.maxPlayers}`}
+                              {`${lobby.activePlayers.length}/${lobby.maxPlayers}`}
                             </td>
                             <td className="tw-pr-0 tw-text-left tw-relative tw-font-medium tw-text-sm tw-pl-3 tw-py-4 tw-whitespace-nowrap">
                               <button onClick={() => joinLobby(lobby)}>
