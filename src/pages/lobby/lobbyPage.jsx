@@ -17,6 +17,11 @@ const LobbyPage = () => {
     if (userInfo.userID === lobbyData.userID) {
       try {
         await deleteDoc(doc(db, "lobbies", lobbyId));
+
+        lobbyData.activePlayers.forEach(async (userID) => {
+          alert("Lobby creator deleted the lobby.");
+        });
+
         navigate("/dashboard");
       } catch (error) {
         console.error("Error deleting lobby: ", error);
@@ -108,7 +113,69 @@ const LobbyPage = () => {
                   </li>
                 ))}
               </ul>
+              <div>
+                <div className="tw-bg-[#1a1a1a] tw-text-white/50 tw-flex tw-gap-2 tw-justify-center tw-py-6">
+                  <div className="tw-flex-initial tw-py-4 tw-pr-0 tw-pl-2 tw-ml-[-8]">
+                    <div>
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        {activeUsers[0]}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="tw-flex-initial tw-py-4 tw-px-0 "></div>
+                  <div className="tw-flex-initial tw-py-4 tw-pr-2 tw-pl-0 tw-mr-[-8]">
+                    <div>
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        {activeUsers[5]}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+            {/* <div>
+                <div className="tw-bg-[#1a1a1a] tw-text-white/50 tw-flex tw-gap-2 tw-justify-center tw-py-6">
+                  <div className="tw-flex-initial tw-py-4 tw-pr-0 tw-pl-2 tw-ml-[-8]">
+                    <div>
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        +
+                      </div>
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        +
+                      </div>
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        +
+                      </div>
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        +
+                      </div>
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        +
+                      </div>
+                    </div>
+                  </div>
+                  <div className="tw-flex-initial tw-py-4 tw-px-0 "></div>
+                  <div className="tw-flex-initial tw-py-4 tw-pr-2 tw-pl-0 tw-mr-[-8]">
+                    <div>
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        +
+                      </div>
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        +
+                      </div>
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        +
+                      </div>
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        +
+                      </div>
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        +
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> */}
           </div>
         </div>
       </div>

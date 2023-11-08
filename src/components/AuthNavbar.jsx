@@ -76,11 +76,13 @@ function AuthNavbar() {
               {/* </div> */}
               <div className="tw-flex tw-flex-1 tw-items-center tw-justify-center ">
                 <div className="tw-space-x-2 tw-flex tw-flex-shrink-0 tw-items-center">
-                  <img
-                    className="tw-h-10 tw-w-auto"
-                    src={logoPic}
-                    alt="Your Company"
-                  />
+                  <a href="/dashboard">
+                    <img
+                      className="tw-h-10 tw-w-auto"
+                      src={logoPic}
+                      alt="Your Company"
+                    />
+                  </a>
                 </div>
                 {/* <div className="tw-hidden sm:tw-ml-6 sm:tw-block">
                   <div className="tw-flex tw-space-x-4">
