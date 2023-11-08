@@ -63,8 +63,6 @@ const Dashboard = () => {
   const handleCreateLobby = async () => {
     if (hasCreatedLobby) {
       alert("You already created a lobby.");
-      // } else if (!isProfileComplete(userInfo)) {
-      //   alert("Please update your profile before creating a lobby.");
     } else {
       const newLobbyData = {
         userID: userInfo.userID,
@@ -89,10 +87,17 @@ const Dashboard = () => {
   const joinLobby = async (lobby) => {
     console.log("lobby: ", lobby);
 
-    if (!lobby.activePlayers.includes(userInfo.userID)) {
+    if (userInfo.userID === lobby.userID) {
+      // User is the creator of this lobby
+      navigate(`/lobby/${lobby.userID}`);
+    } else if (hasCreatedLobby) {
+      // User has already created a lobby, so they can't join another
+      alert("You can't join another lobby when you've already created one.");
+    } else {
+      // User can join this lobby
       await joinNewLobby({ lobby, userInfo });
+      navigate(`/lobby/${lobby.userID}`);
     }
-    navigate(`/lobby/${lobby.userID}`);
   };
 
   return (

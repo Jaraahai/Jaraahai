@@ -88,14 +88,15 @@ const LobbyPage = () => {
                     Delete Lobby
                   </button>
                 )}
-                {lobbyData.activePlayers.includes(userInfo.userID) && (
-                  <button
-                    className="tw-bg-[#484848] tw-text-white tw-font-medium tw-py-2 tw-px-4 tw-rounded-md"
-                    onClick={handleLeaveLobby}
-                  >
-                    Leave Lobby
-                  </button>
-                )}
+                {userInfo.userID !== lobbyData.userID &&
+                  lobbyData.activePlayers.includes(userInfo.userID) && (
+                    <button
+                      className="tw-bg-[#484848] tw-text-white tw-font-medium tw-py-2 tw-px-4 tw-rounded-md"
+                      onClick={handleLeaveLobby}
+                    >
+                      Leave Lobby
+                    </button>
+                  )}
               </div>
               <h1 className="tw-mt-8 tw-text-xl tw-font-semibold">
                 Active Users:
