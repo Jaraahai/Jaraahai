@@ -7,6 +7,6 @@ export function ProtectedRoute({ element }) {
   if (user) {
     return element;
   } else {
-    return <Navigate to="/auth" />;
+    return <Navigate to="/profile" />;
   }
 }

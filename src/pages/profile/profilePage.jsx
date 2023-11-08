@@ -32,7 +32,7 @@ export const ProfilePage = () => {
     }
 
     fetchData();
-  }, [db, userInfo.userID]);
+  }, []);
 
   const onSubmit = async (e) => {
     e.preventDefault();

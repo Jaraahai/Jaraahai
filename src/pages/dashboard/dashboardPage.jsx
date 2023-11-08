@@ -70,7 +70,7 @@ const Dashboard = () => {
         userID: userInfo.userID,
         creator: userInfo.name,
         rank: userInfo.rank,
-        lobbyName: "New Lobby1",
+        lobbyName: `${userInfo.name}'s Lobby`,
         maxPlayers: 10,
         activePlayers: [userInfo.userID],
       };

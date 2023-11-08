@@ -24,7 +24,7 @@ export const useCreateLobby = () => {
           userID,
           creator: creatorName,
           rank: creatorRank,
-          lobbyName,
+          lobbyName: `${creatorName}'s Lobby`,
           maxPlayers,
           activePlayers: [userID],
           createdAt: serverTimestamp(),
