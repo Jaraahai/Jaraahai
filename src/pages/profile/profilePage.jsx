@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { storage } from "../../config/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useAddProfileData } from "../../hooks/useAddProfile";
+import profilePic from "../../img/profile.png";
 
 export const ProfilePage = () => {
   const { saveProfileData, userInfo, db } = useAddProfileData();
   const [isEditing, setIsEditing] = useState(false);
+  const [file, setFile] = useState("");
 
   const [name, setName] = useState(userInfo.name || "");
   const [age, setAge] = useState(userInfo.age || 0);
@@ -61,7 +65,7 @@ export const ProfilePage = () => {
           Account Information
         </h1>
 
-        <div className="">
+        <div>
           <div>
             <div className="tw-bg-[#303030] tw-h-px tw-min-h-px"></div>
             <div className="account-security">
@@ -135,6 +139,25 @@ export const ProfilePage = () => {
                 onSubmit={onSubmit}
                 className="  tw-rounded tw-px-8 tw-pt-6 tw-pb-8 tw-mb-4"
               >
+                <div className="tw-mb-4">
+                  <label
+                    className="tw-block tw-text-gray-700 tw-text-sm tw-font-bold tw-mb-2"
+                    htmlFor="file"
+                  >
+                    Image:{" "}
+                    <img
+                      src={profilePic}
+                      alt=""
+                      className="tw-h-8 tw-w-8 tw-rounded-full"
+                    />
+                  </label>
+                  <input
+                    className="tw-hidden tw-shadow tw-border tw-rounded tw-w-full tw-py-2 tw-px-3 tw-text-white tw-leading-tight focus:tw-outline-none focus:tw-shadow-outline"
+                    id="file"
+                    onChange={(e) => setFile(e.target.files[0])}
+                    type="file"
+                  />
+                </div>
                 <div className="tw-mb-4">
                   <label
                     className="tw-block tw-text-gray-700 tw-text-sm tw-font-bold tw-mb-2"

@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 // import { getMessaging, getToken } from "firebase/messaging";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCPGfUnGw24Any0LsFdXEkaLSZ-I8WsfUU",
@@ -13,10 +14,11 @@ const firebaseConfig = {
   measurementId: "G-CEPDZTJSZY",
 };
 
-export const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
 export const db = getFirestore(app);
+export const storage = getStorage(app);
 
 // function requestPermission() {
 //   console.log("Requesting permission...");
