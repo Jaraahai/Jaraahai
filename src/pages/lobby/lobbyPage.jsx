@@ -126,7 +126,7 @@ const LobbyPage = () => {
                   <div className="tw-flex-initial tw-py-4 tw-pr-2 tw-pl-0 tw-mr-[-8]">
                     <div>
                       <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                        {activeUsers[5]}
+                        {activeUsers[1]}
                       </div>
                     </div>
                   </div>
