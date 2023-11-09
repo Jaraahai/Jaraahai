@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { storage } from "../../config/firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useAddProfileData } from "../../hooks/useAddProfile";
 import profilePic from "../../img/profile.png";
@@ -8,12 +8,13 @@ import profilePic from "../../img/profile.png";
 export const ProfilePage = () => {
   const { saveProfileData, userInfo, db } = useAddProfileData();
   const [isEditing, setIsEditing] = useState(false);
-  const [file, setFile] = useState("");
+  const [file, setFile] = useState(null);
 
   const [name, setName] = useState(userInfo.name || "");
   const [age, setAge] = useState(userInfo.age || 0);
   const [rank, setRank] = useState(userInfo.rank || "");
   const [phoneNumber, setPhoneNumber] = useState(userInfo.phoneNumber || "");
+  const [photoURL, setPhotoURL] = useState(userInfo.photoURL || "");
 
   useEffect(() => {
     async function fetchData() {
@@ -27,6 +28,7 @@ export const ProfilePage = () => {
         setAge(userData.age);
         setRank(userData.rank);
         setPhoneNumber(userData.phoneNumber);
+        setPhotoURL(userData.photoURL);
       } else {
         console.log("Document does not exist.");
       }
@@ -34,9 +36,43 @@ export const ProfilePage = () => {
       //   console.error("Error fetching data:", error);
       // }
     }
+    async function uploadFile() {
+      if (file) {
+        const uniqueName = new Date().getTime() + file.name;
+        const storageRef = ref(storage, uniqueName);
 
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(`Upload is ${progress}% done`);
+          },
+          (error) => {
+            console.log("Error uploading file: ", error);
+          },
+          async () => {
+            try {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              console.log("File available at", downloadURL);
+              setPhotoURL(downloadURL);
+
+              const userDocRef = doc(db, "profile", userInfo.userID);
+              await setDoc(userDocRef, {
+                photoURL: downloadURL,
+              });
+            } catch (error) {
+              console.error("Error getting download URL: ", error);
+            }
+          }
+        );
+      }
+    }
+    uploadFile();
     fetchData();
-  }, []);
+  }, [file]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -46,6 +82,7 @@ export const ProfilePage = () => {
       age,
       rank,
       phoneNumber,
+      photoURL,
     });
     // await fetchData();
     setIsEditing(false);
@@ -72,6 +109,12 @@ export const ProfilePage = () => {
               <h1 className="tw-py-6 tw-text-2xl tw-font-bold tw-tracking-[0.005em] tw-leading-7">
                 Account Security
               </h1>
+
+              <img
+                src={photoURL || profilePic}
+                alt=""
+                className="tw-cursor-pointer tw-h-20 tw-w-20 tw-rounded-full"
+              />
               <div className="tw-py-4">
                 <h2 className="tw-text-base tw-font-bold tw-tracking-[0.005em] tw-leading-5">
                   Password
@@ -144,17 +187,19 @@ export const ProfilePage = () => {
                     className="tw-block tw-text-gray-700 tw-text-sm tw-font-bold tw-mb-2"
                     htmlFor="file"
                   >
-                    Image:{" "}
+                    Image:
                     <img
-                      src={profilePic}
+                      src={photoURL || profilePic}
                       alt=""
-                      className="tw-h-8 tw-w-8 tw-rounded-full"
+                      className="tw-cursor-pointer tw-h-14 tw-w-14 tw-rounded-full"
                     />
                   </label>
                   <input
                     className="tw-hidden tw-shadow tw-border tw-rounded tw-w-full tw-py-2 tw-px-3 tw-text-white tw-leading-tight focus:tw-outline-none focus:tw-shadow-outline"
                     id="file"
-                    onChange={(e) => setFile(e.target.files[0])}
+                    onChange={(e) => {
+                      setFile(e.target.files[0]);
+                    }}
                     type="file"
                   />
                 </div>
@@ -166,7 +211,7 @@ export const ProfilePage = () => {
                     Your name
                   </label>
                   <input
-                    className="tw-shadow  tw-border tw-rounded tw-w-full tw-py-2 tw-px-3 tw-text-white tw-leading-tight focus:tw-outline-none focus:tw-shadow-outline"
+                    className="tw-shadow tw-border tw-rounded tw-w-full tw-py-2 tw-px-3 tw-text-white tw-leading-tight focus:tw-outline-none focus:tw-shadow-outline"
                     id="username"
                     value={name}
                     onChange={(e) => {

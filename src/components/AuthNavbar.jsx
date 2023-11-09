@@ -26,12 +26,14 @@ function AuthNavbar() {
   // }
   const { userInfo, db } = useAddProfileData();
   const [name, setName] = useState(userInfo.name || "");
+  const [photoURL, setPhotoURL] = useState(userInfo.photoURL || "");
 
   async function fetchData() {
     const res = await getDoc(doc(db, "profile", userInfo.userID));
     if (res.exists()) {
       const userData = res.data(doc);
       setName(userData.name);
+      setPhotoURL(userData.photoURL);
     } else {
       console.log("Document does not exist.");
     }
@@ -126,7 +128,7 @@ function AuthNavbar() {
                       <span className="tw-sr-only">Open user menu</span>
                       <img
                         className="tw-h-8 tw-w-8 tw-rounded-full"
-                        src={profilePic}
+                        src={photoURL || profilePic}
                         alt=""
                       />
                     </Menu.Button>

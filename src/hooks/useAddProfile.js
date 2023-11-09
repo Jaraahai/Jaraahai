@@ -9,7 +9,13 @@ export const useAddProfileData = () => {
 
   // console.log("userInfo: ", userInfo);
 
-  const saveProfileData = async ({ name, age, rank, phoneNumber }) => {
+  const saveProfileData = async ({
+    name,
+    age,
+    rank,
+    phoneNumber,
+    photoURL,
+  }) => {
     try {
       const res = await setDoc(doc(db, "profile", userID), {
         userID,
@@ -17,6 +23,7 @@ export const useAddProfileData = () => {
         age,
         rank,
         phoneNumber,
+        photoURL,
         createdAt: serverTimestamp(),
       });
 
