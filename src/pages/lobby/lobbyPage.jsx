@@ -40,14 +40,31 @@ const LobbyPage = () => {
 
   const handleLeaveLobby = async () => {
     try {
+      let updatedTeamOne = lobbyData.teamOne || [];
+      let updatedTeamTwo = lobbyData.teamTwo || [];
+
       if (lobbyData.activePlayers.includes(userInfo.userID)) {
         const updatedActivePlayers = lobbyData.activePlayers.filter(
           (userID) => userID !== userInfo.userID
         );
 
+        if (updatedTeamOne.includes(userInfo.userID)) {
+          updatedTeamOne = updatedTeamOne.filter(
+            (userID) => userID !== userInfo.userID
+          );
+        }
+
+        if (updatedTeamTwo.includes(userInfo.userID)) {
+          updatedTeamTwo = updatedTeamTwo.filter(
+            (userID) => userID !== userInfo.userID
+          );
+        }
+
         await setDoc(doc(db, "lobbies", lobbyId), {
           ...lobbyData,
           activePlayers: updatedActivePlayers,
+          teamOne: updatedTeamOne,
+          teamTwo: updatedTeamTwo,
         });
       }
       navigate("/dashboard");
@@ -64,19 +81,24 @@ const LobbyPage = () => {
         );
 
         const updatedTeamOne = lobbyData.teamOne || [];
-        updatedTeamOne.push(userInfo.userID);
 
-        await setDoc(doc(db, "lobbies", lobbyId), {
-          ...lobbyData,
-          teamOne: updatedTeamOne,
-          teamTwo: updatedTeamTwo,
-        });
+        if (!updatedTeamOne.includes(userInfo.userID)) {
+          updatedTeamOne.push(userInfo.userID);
 
-        setLobbyData((prevData) => ({
-          ...prevData,
-          teamOne: updatedTeamOne,
-          teamTwo: updatedTeamTwo,
-        }));
+          await setDoc(doc(db, "lobbies", lobbyId), {
+            ...lobbyData,
+            teamOne: updatedTeamOne,
+            teamTwo: updatedTeamTwo,
+          });
+
+          setLobbyData((prevData) => ({
+            ...prevData,
+            teamOne: updatedTeamOne,
+            teamTwo: updatedTeamTwo,
+          }));
+        }
+      } else {
+        console.log("User is already in Team One!");
       }
     } catch (error) {
       console.error("Error moving user to teamOne: ", error);
@@ -90,19 +112,24 @@ const LobbyPage = () => {
         );
 
         const updatedTeamTwo = lobbyData.teamTwo || [];
-        updatedTeamTwo.push(userInfo.userID);
 
-        await setDoc(doc(db, "lobbies", lobbyId), {
-          ...lobbyData,
-          teamOne: updatedTeamOne,
-          teamTwo: updatedTeamTwo,
-        });
+        if (!updatedTeamTwo.includes(userInfo.userID)) {
+          updatedTeamTwo.push(userInfo.userID);
 
-        setLobbyData((prevData) => ({
-          ...prevData,
-          teamOne: updatedTeamOne,
-          teamTwo: updatedTeamTwo,
-        }));
+          await setDoc(doc(db, "lobbies", lobbyId), {
+            ...lobbyData,
+            teamOne: updatedTeamOne,
+            teamTwo: updatedTeamTwo,
+          });
+
+          setLobbyData((prevData) => ({
+            ...prevData,
+            teamOne: updatedTeamOne,
+            teamTwo: updatedTeamTwo,
+          }));
+        }
+      } else {
+        console.log("User is already in Team Two!");
       }
     } catch (error) {
       console.error("Error moving user to teamTwo: ", error);

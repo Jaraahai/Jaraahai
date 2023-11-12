@@ -85,7 +85,12 @@ const Dashboard = () => {
 
   // Join a lobby
   const joinLobby = async (lobby) => {
-    console.log("lobby: ", lobby);
+    // if (!userInfo.name || !userInfo.rank) {
+    //   //User hasn't edited their profile
+    //   alert("Please complete your profile before joining a lobby.");
+    //   navigate("/profile");
+    //   return;
+    // }
 
     if (userInfo.userID === lobby.userID) {
       // User is the creator of this lobby
