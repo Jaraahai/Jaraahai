@@ -5,6 +5,7 @@ import { doc, getDoc, deleteDoc, setDoc } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
 import { useAddProfileData } from "../../hooks/useAddProfile";
 import AuthNavbar from "../../components/AuthNavbar";
+import profilePic from "../../img/profile.png";
 
 const LobbyPage = () => {
   const { lobbyId } = useParams();
@@ -12,6 +13,10 @@ const LobbyPage = () => {
   const navigate = useNavigate();
   const [lobbyData, setLobbyData] = useState(null);
   const [activeUsers, setActiveUsers] = useState([]);
+
+  const [name, setName] = useState(userInfo.name || "");
+  const [rank, setRank] = useState(userInfo.rank || "");
+  const [photoURL, setPhotoURL] = useState(userInfo.photoURL || "");
 
   const handleDeleteLobby = async () => {
     if (userInfo.userID === lobbyData.userID) {
@@ -47,6 +52,47 @@ const LobbyPage = () => {
     }
   };
 
+  const handleMoveToTeamOne = async () => {
+    try {
+      if (lobbyData.activePlayers.includes(userInfo.userID)) {
+        const updatedActivePlayers = lobbyData.activePlayers.filter(
+          (userID) => userID !== userInfo.userID
+        );
+
+        const updatedTeamOne = lobbyData.teamOne || [];
+        updatedTeamOne.push(userInfo.userID);
+
+        await setDoc(doc(db, "lobbies", lobbyId), {
+          ...lobbyData,
+          activePlayers: updatedActivePlayers,
+          teamOne: updatedTeamOne,
+        });
+      }
+    } catch (error) {
+      console.error("Error moving user to teamOne: ", error);
+    }
+  };
+  const handleMoveToTeamTwo = async () => {
+    try {
+      if (lobbyData.activePlayers.includes(userInfo.userID)) {
+        const updatedActivePlayers = lobbyData.activePlayers.filter(
+          (userID) => userID !== userInfo.userID
+        );
+
+        const updatedTeamTwo = lobbyData.teamTwo || [];
+        updatedTeamTwo.push(userInfo.userID);
+
+        await setDoc(doc(db, "lobbies", lobbyId), {
+          ...lobbyData,
+          activePlayers: updatedActivePlayers,
+          teamTwo: updatedTeamTwo,
+        });
+      }
+    } catch (error) {
+      console.error("Error moving user to teamTwo: ", error);
+    }
+  };
+
   useEffect(() => {
     const fetchLobbyData = async () => {
       try {
@@ -65,12 +111,29 @@ const LobbyPage = () => {
       }
     };
 
+    async function fetchData() {
+      const res = await getDoc(doc(db, "profile", userInfo.userID));
+      if (res.exists()) {
+        const userData = res.data(doc);
+        setName(userData.name);
+        setRank(userData.rank);
+        setPhotoURL(userData.photoURL);
+      } else {
+        console.log("Document does not exist.");
+      }
+    }
+    fetchData();
     fetchLobbyData();
   }, []);
 
   if (!lobbyData) {
     return <div>Loading...</div>;
   }
+
+  const isUserInTeamOne =
+    lobbyData.teamOne && lobbyData.teamOne.includes(userInfo.userID);
+  const isUserInTeamTwo =
+    lobbyData.teamTwo && lobbyData.teamTwo.includes(userInfo.userID);
 
   return (
     <div className="tw-bg-[#161616] tw-min-h-screen tw-text-white">
@@ -113,69 +176,69 @@ const LobbyPage = () => {
                   </li>
                 ))}
               </ul>
-              <div>
-                <div className="tw-bg-[#1a1a1a] tw-text-white/50 tw-flex tw-gap-2 tw-justify-center tw-py-6">
-                  <div className="tw-flex-initial tw-py-4 tw-pr-0 tw-pl-2 tw-ml-[-8]">
-                    <div>
-                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                        {activeUsers[0]}
-                      </div>
+            </div>
+
+            <div>
+              <div className="tw-bg-[#1a1a1a] tw-text-white/50 tw-flex tw-gap-2 tw-justify-center tw-py-6">
+                <div className="tw-flex-initial tw-py-4 tw-pr-0 tw-pl-2 tw-ml-[-8]">
+                  <div>
+                    <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                      <button
+                        onClick={handleMoveToTeamOne}
+                        className="tw-cursor-pointer"
+                      >
+                        +
+                      </button>
                     </div>
+                    {isUserInTeamOne && (
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        <div className="tw-flex tw-items-center tw-gap-4 tw-pr-20 tw-tracking-[0.02em] tw-text-sm tw-font-normal tw-leading-5">
+                          <br />
+                          <img
+                            className="tw-h-14 tw-w-14 tw-rounded-full"
+                            src={photoURL || profilePic}
+                            alt=""
+                          />
+                          <div>
+                            <p className="tw-text-white">{name}</p>
+                            <p className="tw-text-white/50">{rank}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className="tw-flex-initial tw-py-4 tw-px-0 "></div>
-                  <div className="tw-flex-initial tw-py-4 tw-pr-2 tw-pl-0 tw-mr-[-8]">
-                    <div>
-                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                        {activeUsers[1]}
-                      </div>
+                </div>
+                <div className="tw-flex-initial tw-py-4 tw-px-0 "></div>
+                <div className="tw-flex-initial tw-py-4 tw-pr-2 tw-pl-0 tw-mr-[-8]">
+                  <div>
+                    <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                      <button
+                        onClick={handleMoveToTeamTwo}
+                        className="tw-cursor-pointer"
+                      >
+                        +
+                      </button>
                     </div>
+                    {isUserInTeamTwo && (
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        <div className="tw-flex tw-items-center tw-gap-4 tw-pr-20 tw-tracking-[0.02em] tw-text-sm tw-font-normal tw-leading-5">
+                          <br />
+                          <img
+                            className="tw-h-14 tw-w-14 tw-rounded-full"
+                            src={photoURL || profilePic}
+                            alt=""
+                          />
+                          <div>
+                            <p className="tw-text-white">{name}</p>
+                            <p className="tw-text-white/50">{rank}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
-            {/* <div>
-                <div className="tw-bg-[#1a1a1a] tw-text-white/50 tw-flex tw-gap-2 tw-justify-center tw-py-6">
-                  <div className="tw-flex-initial tw-py-4 tw-pr-0 tw-pl-2 tw-ml-[-8]">
-                    <div>
-                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                        +
-                      </div>
-                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                        +
-                      </div>
-                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                        +
-                      </div>
-                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                        +
-                      </div>
-                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                        +
-                      </div>
-                    </div>
-                  </div>
-                  <div className="tw-flex-initial tw-py-4 tw-px-0 "></div>
-                  <div className="tw-flex-initial tw-py-4 tw-pr-2 tw-pl-0 tw-mr-[-8]">
-                    <div>
-                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                        +
-                      </div>
-                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                        +
-                      </div>
-                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                        +
-                      </div>
-                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                        +
-                      </div>
-                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                        +
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
           </div>
         </div>
       </div>
