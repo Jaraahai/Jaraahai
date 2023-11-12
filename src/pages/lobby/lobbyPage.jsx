@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { doc, getDoc, deleteDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, deleteDoc, setDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
 import { useAddProfileData } from "../../hooks/useAddProfile";
 import AuthNavbar from "../../components/AuthNavbar";
@@ -15,6 +15,8 @@ const LobbyPage = () => {
   const [activeUsers, setActiveUsers] = useState([]);
   const [teamOneUsers, setTeamOneUsers] = useState([]);
   const [teamTwoUsers, setTeamTwoUsers] = useState([]);
+
+  const MAX_TEAM_SIZE = 5;
 
   // const [name, setName] = useState(userInfo.name || "");
   // const [rank, setRank] = useState(userInfo.rank || "");
@@ -155,29 +157,57 @@ const LobbyPage = () => {
       }
     };
 
-    // async function fetchData() {
-    //   const res = await getDoc(doc(db, "profile", userInfo.userID));
-    //   if (res.exists()) {
-    //     const userData = res.data(doc);
-    //     setName(userData.name);
-    //     setRank(userData.rank);
-    //     setPhotoURL(userData.photoURL);
-    //   } else {
-    //     console.log("Document does not exist.");
-    //   }
-    // }
-    // fetchData();
+    const unsubscribe = onSnapshot(doc(db, "lobbies", lobbyId), (snapshot) => {
+      if (snapshot.exists()) {
+        (async () => {
+          const updatedLobbyData = snapshot.data();
+          setLobbyData(updatedLobbyData);
+
+          const activeUsersData = updatedLobbyData.activePlayers || [];
+          const activeTeamOneUsersData = updatedLobbyData.teamOne || [];
+          const activeTeamTwoUsersData = updatedLobbyData.teamTwo || [];
+
+          const teamOneUsersPromises = activeTeamOneUsersData.map(
+            async (userId) => {
+              const userDoc = await getDoc(doc(db, "profile", userId));
+              return userDoc.data();
+            }
+          );
+
+          const teamTwoUsersPromises = activeTeamTwoUsersData.map(
+            async (userId) => {
+              const userDoc = await getDoc(doc(db, "profile", userId));
+              return userDoc.data();
+            }
+          );
+
+          const usersPromises = activeUsersData.map(async (userId) => {
+            const userDoc = await getDoc(doc(db, "profile", userId));
+            return userDoc.data();
+          });
+
+          const [usersData, teamOneUsersData, teamTwoUsersData] =
+            await Promise.all([
+              Promise.all(usersPromises),
+              Promise.all(teamOneUsersPromises),
+              Promise.all(teamTwoUsersPromises),
+            ]);
+          setTeamOneUsers(teamOneUsersData);
+          setTeamTwoUsers(teamTwoUsersData);
+          setActiveUsers(usersData);
+        })();
+      } else {
+        console.log("Lobby not found.");
+      }
+    });
+
     fetchLobbyData();
+    return () => unsubscribe();
   }, [lobbyId]);
 
   if (!lobbyData) {
     return <div>Loading...</div>;
   }
-
-  // const isUserInTeamOne =
-  //   lobbyData.teamOne && lobbyData.teamOne.includes(userInfo.userID);
-  // const isUserInTeamTwo =
-  //   lobbyData.teamTwo && lobbyData.teamTwo.includes(userInfo.userID);
 
   return (
     <div className="tw-bg-[#161616] tw-min-h-screen tw-text-white">
@@ -226,15 +256,16 @@ const LobbyPage = () => {
               <div className="tw-bg-[#1a1a1a] tw-text-white/50 tw-flex tw-gap-2 tw-justify-center tw-py-6">
                 <div className="tw-flex-initial tw-py-4 tw-pr-0 tw-pl-2 tw-ml-[-8]">
                   <div>
-                    <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                      <button
-                        onClick={handleMoveToTeamOne}
-                        className="tw-cursor-pointer"
-                      >
-                        +
-                      </button>
-                    </div>
-                    {/* {isUserInTeamOne && */}
+                    {teamOneUsers.length < MAX_TEAM_SIZE && (
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        <button
+                          onClick={handleMoveToTeamOne}
+                          className="tw-cursor-pointer"
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
                     {teamOneUsers.map((user, index) => (
                       <div
                         key={index}
@@ -259,15 +290,16 @@ const LobbyPage = () => {
                 <div className="tw-flex-initial tw-py-4 tw-px-0 "></div>
                 <div className="tw-flex-initial tw-py-4 tw-pr-2 tw-pl-0 tw-mr-[-8]">
                   <div>
-                    <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
-                      <button
-                        onClick={handleMoveToTeamTwo}
-                        className="tw-cursor-pointer"
-                      >
-                        +
-                      </button>
-                    </div>
-                    {/* {isUserInTeamTwo && */}
+                    {teamTwoUsers.length < MAX_TEAM_SIZE && (
+                      <div className="tw-w-80 tw-h-20 tw-bg-[#333] tw-flex tw-items-center tw-justify-center tw-flex-wrap tw-text-xl tw-rounded tw-mx-0 tw-mt-0 tw-mb-2">
+                        <button
+                          onClick={handleMoveToTeamTwo}
+                          className="tw-cursor-pointer"
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
                     {teamTwoUsers.map((user, index) => (
                       <div
                         key={index}
